@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_media_app/screens/post_screen.dart';
+import 'package:social_media_app/screens/sign_in_screen.dart';
 
-class SignUpScreen extends StatefulWidget { 
+import '../bloc/auth_cubit.dart';
+
+class SignUpScreen extends StatefulWidget {
   static String routeName = "/sign_up_screen";
   const SignUpScreen({super.key});
 
@@ -22,8 +27,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
       return;
     }
     _formKey.currentState!.save();
-    // TODO:- Sign Up with email and password.
-    // TODO:- Send email to verify.
+    context.read<AuthCubit>().signUpWithEmail(
+          email: _email,
+          password: _password,
+          username: _username,
+        );
   }
 
   @override
@@ -46,97 +54,120 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: SafeArea(
         child: Form(
           key: _formKey,
-          child: ListView(
-            physics: ClampingScrollPhysics(),
-            padding: EdgeInsets.all(15),
-            children: [
-              // TODO:- Email
-              TextFormField(
-                keyboardType: TextInputType.emailAddress,
-                textCapitalization: TextCapitalization.none,
-                autocorrect: false,
-                textInputAction: TextInputAction.next,
-                onSaved: (value) {
-                  _email = value!.trim();
-                },
-                onFieldSubmitted: (_) =>
-                    FocusScope.of(context).requestFocus(_usernameFocusNode),
-                decoration: InputDecoration(
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                    labelText: "Enter Email"),
-                validator: (value) {
-                  if (value != null && value.isEmpty) {
-                    return "Please Provide Email...";
-                  }
-                  if (value!.length < 4) {
-                    return "Please provide longer email...";
-                  }
-                  return null;
-                },
-              ),
-              // TODO:- User name
-              TextFormField(
-                textCapitalization: TextCapitalization.none,
-                autocorrect: false,
-                focusNode: _usernameFocusNode,
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (_) =>
-                    FocusScope.of(context).requestFocus(_passwordFocusNode),
-                onSaved: (value) {
-                  _username = value!.trim();
-                },
-                decoration: InputDecoration(
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                    labelText: "Enter User Name"),
-                validator: (value) {
-                  if (value != null && value.isEmpty) {
-                    return "Please Provide UserName...";
-                  }
-                  if (value!.length < 4) {
-                    return "Please provide longer UserName...";
-                  }
-                  return null;
-                },
-              ),
-              // TODO:- Password
-              TextFormField(
-                focusNode: _passwordFocusNode,
-                textInputAction: TextInputAction.done,
-                obscureText: true,
-                onFieldSubmitted: (_) => _submit(),
-                onSaved: (value) {
-                  _password = value!.trim();
-                },
-                decoration: InputDecoration(
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                    labelText: "Enter Password"),
-                validator: (value) {
-                  if (value != null && value.isEmpty) {
-                    return "Please Provide Password...";
-                  }
-                  if (value!.length < 4) {
-                    return "Please provide longer Password...";
-                  }
-                  return null;
-                },
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    // TODO:- Sign Up.
-                  },
-                  child: Text("Sign Up")),
-              TextButton(
-                  onPressed: () {
-                    // TODO:- Go to sign in screen.
-                  },
-                  child: Text("Sign In Instead")),
-            ],
+          child: BlocConsumer<AuthCubit, AuthState>(
+            listener: (prevState, currentState) {
+              if (currentState is AuthSignedUp) {
+                Navigator.of(context).pushNamed(PostScreen.routeName);
+              }
+              if (currentState is AuthError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(currentState.message),
+                    duration: Duration(seconds: 2),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+            builder: (context, state) {
+              if (state is AuthLoading) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              return ListView(
+                physics: ClampingScrollPhysics(),
+                padding: EdgeInsets.all(15),
+                children: [
+                  // TODO:- Email
+                  TextFormField(
+                    keyboardType: TextInputType.emailAddress,
+                    textCapitalization: TextCapitalization.none,
+                    autocorrect: false,
+                    textInputAction: TextInputAction.next,
+                    onSaved: (value) {
+                      _email = value!.trim();
+                    },
+                    onFieldSubmitted: (_) =>
+                        FocusScope.of(context).requestFocus(_usernameFocusNode),
+                    decoration: InputDecoration(
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        labelText: "Enter Email"),
+                    validator: (value) {
+                      if (value != null && value.isEmpty) {
+                        return "Please Provide Email...";
+                      }
+                      if (value!.length < 4) {
+                        return "Please provide longer email...";
+                      }
+                      return null;
+                    },
+                  ),
+                  // TODO:- User name
+                  TextFormField(
+                    textCapitalization: TextCapitalization.none,
+                    autocorrect: false,
+                    focusNode: _usernameFocusNode,
+                    textInputAction: TextInputAction.next,
+                    onFieldSubmitted: (_) =>
+                        FocusScope.of(context).requestFocus(_passwordFocusNode),
+                    onSaved: (value) {
+                      _username = value!.trim();
+                    },
+                    decoration: InputDecoration(
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        labelText: "Enter User Name"),
+                    validator: (value) {
+                      if (value != null && value.isEmpty) {
+                        return "Please Provide UserName...";
+                      }
+                      if (value!.length < 4) {
+                        return "Please provide longer UserName...";
+                      }
+                      return null;
+                    },
+                  ),
+                  // TODO:- Password
+                  TextFormField(
+                    focusNode: _passwordFocusNode,
+                    textInputAction: TextInputAction.done,
+                    obscureText: true,
+                    onFieldSubmitted: (_) => _submit(),
+                    onSaved: (value) {
+                      _password = value!.trim();
+                    },
+                    decoration: InputDecoration(
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        labelText: "Enter Password"),
+                    validator: (value) {
+                      if (value != null && value.isEmpty) {
+                        return "Please Provide Password...";
+                      }
+                      if (value!.length < 4) {
+                        return "Please provide longer Password...";
+                      }
+                      return null;
+                    },
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        _submit();
+                      },
+                      child: Text("Sign Up")),
+                  TextButton(
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed(SignInScreen.routeName),
+                    child: Text("Sign In Instead"),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
