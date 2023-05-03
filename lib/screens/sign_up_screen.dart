@@ -55,16 +55,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: Form(
           key: _formKey,
           child: BlocConsumer<AuthCubit, AuthState>(
-            listener: (prevState, currentState) {
+            listener: (prevState, currentState) async {
               if (currentState is AuthSignedUp) {
-                Navigator.of(context).pushNamed(PostScreen.routeName);
+                await Navigator.of(context).pushNamed(PostScreen.routeName);
               }
               if (currentState is AuthError) {
+                ScaffoldMessenger.of(context).removeCurrentSnackBar();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(currentState.message),
+                    backgroundColor: Theme.of(context).errorColor,
+                    content: Text(
+                      currentState.message,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onError),
+                    ),
                     duration: Duration(seconds: 2),
-                    backgroundColor: Colors.red,
                   ),
                 );
               }
@@ -96,10 +101,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         labelText: "Enter Email"),
                     validator: (value) {
-                      if (value != null && value.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return "Please Provide Email...";
                       }
-                      if (value!.length < 4) {
+                      if (value.length < 4) {
                         return "Please provide longer email...";
                       }
                       return null;
@@ -122,10 +127,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         labelText: "Enter User Name"),
                     validator: (value) {
-                      if (value != null && value.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return "Please Provide UserName...";
                       }
-                      if (value!.length < 4) {
+                      if (value.length < 4) {
                         return "Please provide longer UserName...";
                       }
                       return null;
@@ -146,10 +151,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         labelText: "Enter Password"),
                     validator: (value) {
-                      if (value != null && value.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return "Please Provide Password...";
                       }
-                      if (value!.length < 4) {
+                      if (value.length < 4) {
                         return "Please provide longer Password...";
                       }
                       return null;

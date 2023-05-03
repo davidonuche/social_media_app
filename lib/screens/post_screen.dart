@@ -31,6 +31,7 @@ class _PostScreenState extends State<PostScreen> {
         ],
       ),
       body: ListView.builder(
+        itemCount: 5,
         itemBuilder: (context, index) {
           return Container();
         },

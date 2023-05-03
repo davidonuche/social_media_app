@@ -54,6 +54,20 @@ class _SignInScreenState extends State<SignInScreen> {
           key: _formKey,
           child: BlocConsumer<AuthCubit, AuthState>(
             listener: (prevState, currState) {
+              if (currState is AuthError) {
+                ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: Theme.of(context).errorColor,
+                    content: Text(
+                      currState.message,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onError),
+                    ),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
               if (currState is AuthSignedIn) {
                 Navigator.of(context).pushNamed(PostScreen.routeName);
               }
@@ -85,10 +99,10 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                         labelText: "Enter Email"),
                     validator: (value) {
-                      if (value != null && value.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return "Please Provide Email...";
                       }
-                      if (value!.length < 4) {
+                      if (value.length < 4) {
                         return "Please provide longer email...";
                       }
                       return null;
@@ -109,10 +123,10 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                         labelText: "Enter Password"),
                     validator: (value) {
-                      if (value != null && value.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return "Please Provide Password...";
                       }
-                      if (value!.length < 5) {
+                      if (value.length < 5) {
                         return "Please provide longer password...";
                       }
                       return null;
