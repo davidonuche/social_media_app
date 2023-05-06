@@ -1,5 +1,7 @@
 import 'dart:io';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart' as storage;
 import 'package:flutter/material.dart';
 
 class CreatePostScreen extends StatefulWidget {
@@ -13,12 +15,28 @@ class CreatePostScreen extends StatefulWidget {
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final _formKey = GlobalKey<FormState>();
   String _description = "";
-  _submit(File image) {
+ Future<void> _submit(File image) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
     _formKey.currentState!.save();
-    // TODO: Write Image and Description to Database
+    // write image to storage
+    storage.FirebaseStorage firebaseStorage = storage.FirebaseStorage.instance;
+    late String imageUrl;
+    await firebaseStorage.ref("image/${UniqueKey()}.png"). putFile(image).then((taskSnapshot) async {
+      imageUrl = await taskSnapshot.ref.getDownloadURL();
+    });
+
+    //  Add to cloud firestore
+    final CollectionReference collectionReference =
+        FirebaseFirestore.instance.collection("post");
+    collectionReference.add({
+      "userId": FirebaseAuth.instance.currentUser!.uid,
+      "description": _description,
+      "timeStamp": Timestamp.now(),
+      "userName": FirebaseAuth.instance.currentUser!.displayName,
+      "imageUrl" : imageUrl,
+    });
     // Pop the screen
     Navigator.of(context).pop();
   }
