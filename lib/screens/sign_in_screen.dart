@@ -69,7 +69,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 );
               }
               if (currState is AuthSignedIn) {
-                Navigator.of(context).pushNamed(PostScreen.routeName);
+                Navigator.of(context).pushReplacementNamed(PostScreen.routeName);
               }
             },
             builder: (context, state) {
