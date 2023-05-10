@@ -69,7 +69,8 @@ class _SignInScreenState extends State<SignInScreen> {
                 );
               }
               if (currState is AuthSignedIn) {
-                Navigator.of(context).pushReplacementNamed(PostScreen.routeName);
+                Navigator.of(context)
+                    .pushReplacementNamed(PostScreen.routeName);
               }
             },
             builder: (context, state) {
@@ -131,6 +132,9 @@ class _SignInScreenState extends State<SignInScreen> {
                       }
                       return null;
                     },
+                  ),
+                  SizedBox(
+                    height: 8,
                   ),
                   ElevatedButton(
                       onPressed: () => _submit(), child: Text("Log In")),

@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_media_app/bloc/auth_cubit.dart';
+import 'package:social_media_app/screens/chat_screen.dart';
 import 'package:social_media_app/screens/create_post_screen.dart';
 import 'package:social_media_app/screens/post_screen.dart';
 import 'screens/sign_in_screen.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
           SignInScreen.routeName:(context) => SignInScreen(),
           PostScreen.routeName:(context) => PostScreen(),
           CreatePostScreen.routeName:(context) => CreatePostScreen(),
+          ChatScreen.routeName:(context) => ChatScreen(),
         },
       ),
     );

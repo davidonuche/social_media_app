@@ -160,6 +160,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       return null;
                     },
                   ),
+                  SizedBox(height: 8,),
                   ElevatedButton(
                       onPressed: () {
                         _submit();

@@ -15,7 +15,7 @@ class CreatePostScreen extends StatefulWidget {
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final _formKey = GlobalKey<FormState>();
   String _description = "";
- Future<void> _submit(File image) async {
+  Future<void> _submit(File image) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -23,7 +23,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     // write image to storage
     storage.FirebaseStorage firebaseStorage = storage.FirebaseStorage.instance;
     late String imageUrl;
-    await firebaseStorage.ref("image/${UniqueKey()}.png"). putFile(image).then((taskSnapshot) async {
+    await firebaseStorage
+        .ref("image/${UniqueKey()}.png")
+        .putFile(image)
+        .then((taskSnapshot) async {
       imageUrl = await taskSnapshot.ref.getDownloadURL();
     });
 
@@ -35,8 +38,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       "description": _description,
       "timeStamp": Timestamp.now(),
       "userName": FirebaseAuth.instance.currentUser!.displayName,
-      "imageUrl" : imageUrl,
-    });
+      "imageUrl": imageUrl,
+    }).then((docReference) => docReference.update({"postID" : docReference.id}));
     // Pop the screen
     Navigator.of(context).pop();
   }
@@ -45,10 +48,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget build(BuildContext context) {
     final File image = ModalRoute.of(context)!.settings.arguments as File;
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        elevation: 0,
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
+          padding: EdgeInsets.all(18),
           children: [
             Image.file(image, fit: BoxFit.cover),
             // Decription Text Field
@@ -62,11 +68,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 }
                 return null;
               },
-              autocorrect: false,
               textCapitalization: TextCapitalization.none,
               decoration: InputDecoration(
-                  enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black))),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+              ),
+              autocorrect: false,
               textInputAction: TextInputAction.done,
               onFieldSubmitted: (_) => _submit(image),
             ),
