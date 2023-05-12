@@ -44,10 +44,7 @@ class _PostScreenState extends State<PostScreen> {
             // TODO:- Navigate back to sign in screen.
             IconButton(
                 onPressed: () {
-                  FirebaseAuth.instance.signOut().then(
-                        (value) => Navigator.of(context)
-                            .pushReplacementNamed(SignInScreen.routeName),
-                      );
+                  FirebaseAuth.instance.signOut();
                 },
                 icon: const Icon(
                   Icons.logout,
