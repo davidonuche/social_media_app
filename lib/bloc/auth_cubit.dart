@@ -47,17 +47,15 @@ class AuthCubit extends Cubit<AuthState> {
       userCredential.user!.updateDisplayName(username);
       // 3. Write user to users collection
       FirebaseFirestore firestore = FirebaseFirestore.instance;
-      await firestore
-          .collection("users")
-          .doc(userCredential.user!.uid)
-          .set({
+      await firestore.collection("users").doc(userCredential.user!.uid).set({
         "email": email,
         "username": username,
       });
+      
+
       await userCredential.user!.sendEmailVerification();
       // if success emit AuthSignedUp()
       emit(AuthSignedUp());
-
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         emit(AuthError("The password provided is too weak."));

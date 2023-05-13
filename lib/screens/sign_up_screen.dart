@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:social_media_app/screens/post_screen.dart';
 import 'package:social_media_app/screens/sign_in_screen.dart';
 
 import '../bloc/auth_cubit.dart';
@@ -57,7 +56,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: BlocConsumer<AuthCubit, AuthState>(
             listener: (prevState, currentState) async {
               if (currentState is AuthSignedUp) {
-                 //Navigator.of(context).pushReplacementNamed(PostScreen.routeName);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                        "Email verification link has been sent. Verify your email address to continue."),
+                  ),
+                );
+                //Navigator.of(context).pushReplacementNamed(PostScreen.routeName);
               }
               if (currentState is AuthError) {
                 ScaffoldMessenger.of(context).removeCurrentSnackBar();
@@ -84,7 +89,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 physics: ClampingScrollPhysics(),
                 padding: EdgeInsets.all(15),
                 children: [
-                  // TODO:- Email
                   TextFormField(
                     keyboardType: TextInputType.emailAddress,
                     textCapitalization: TextCapitalization.none,
@@ -110,7 +114,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       return null;
                     },
                   ),
-                  // TODO:- User name
                   TextFormField(
                     textCapitalization: TextCapitalization.none,
                     autocorrect: false,
@@ -136,7 +139,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       return null;
                     },
                   ),
-                  // TODO:- Password
                   TextFormField(
                     focusNode: _passwordFocusNode,
                     textInputAction: TextInputAction.done,
@@ -160,7 +162,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 8,),
+                  SizedBox(
+                    height: 8,
+                  ),
                   ElevatedButton(
                       onPressed: () {
                         _submit();

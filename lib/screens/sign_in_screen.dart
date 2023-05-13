@@ -1,9 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_media_app/bloc/auth_cubit.dart';
 import 'package:social_media_app/screens/sign_up_screen.dart';
 
-import 'post_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   static String routeName = "/sign_in_screen";
@@ -29,9 +29,6 @@ class _SignInScreenState extends State<SignInScreen> {
           email: _email,
           password: _password,
         );
-    // TODO:- Authenticate with email and password.
-    // TODO:- if verified go to post screen.
-    // TODO:- add email verification.
   }
 
   @override
@@ -69,8 +66,13 @@ class _SignInScreenState extends State<SignInScreen> {
                 );
               }
               if (currState is AuthSignedIn) {
+                if (FirebaseAuth.instance.currentUser!.emailVerified) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text("Verfiy your Email"),
+                  ));
+                }
                 // Navigator.of(context)
-                    // .pushReplacementNamed(PostScreen.routeName);
+                // .pushReplacementNamed(PostScreen.routeName);
               }
             },
             builder: (context, state) {

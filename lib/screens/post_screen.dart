@@ -4,11 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_media_app/screens/create_post_screen.dart';
-import 'package:social_media_app/screens/sign_in_screen.dart';
 import 'package:social_media_app/widgets/post_item.dart';
-
 import '../models/post_model.dart';
-import 'chat_screen.dart';
 
 class PostScreen extends StatefulWidget {
   static String routeName = "/post_screen";
@@ -26,7 +23,6 @@ class _PostScreenState extends State<PostScreen> {
         appBar: AppBar(
           elevation: 0,
           actions: [
-            // TODO:- Add post (pick image and go to create post screen)
             IconButton(
                 onPressed: () async {
                   final ImagePicker imagePicker = ImagePicker();
@@ -41,7 +37,6 @@ class _PostScreenState extends State<PostScreen> {
                   Icons.add,
                   size: 30,
                 )),
-            // TODO:- Navigate back to sign in screen.
             IconButton(
                 onPressed: () {
                   FirebaseAuth.instance.signOut();
